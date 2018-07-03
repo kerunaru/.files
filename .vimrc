@@ -26,6 +26,7 @@ endif
 call plug#begin(expand('~/.vim/plugged'))
 
 Plug 'tobyS/pdv'
+Plug 'dag/vim-fish'
 Plug 'chr4/nginx.vim'
 Plug 'StanAngeloff/php.vim'
 Plug 'airblade/vim-gitgutter'
