@@ -61,6 +61,7 @@ endif
 
 colorscheme default " Redundante, pero IndentGuides lo necesita para arrancar
 
+set t_Co=16 " Establece el número máximo de colores disponibles para VIM
 set encoding=utf-8 " Codificación del texto por defecto
 set expandtab " Convierte los carácteres \\t en espacios
 set shiftwidth=4 " Número de espacios a la hora de indentar el código
@@ -72,12 +73,11 @@ set backspace=indent,eol,start " Permite que el backspace funcione sobre
                                " indentación, inicio de línea y fin de línea
 set listchars=eol:↓,tab:»\ ,trail:~,space:· " Establece carácteres para mostrar
                                             " diferentes carácteres invisibles
+set list " Especifica que se muestren los carácteres invisibles
 " Sobreescribe el color en el que se tiene que mostrar los carácteres
 " invisibles
 hi SpecialKey ctermfg=239
 hi NonText ctermfg=239
-set list " Especifica que se muestren los carácteres invisibles
-set t_Co=16 " Establece el número máximo de colores disponibles para VIM
 set hlsearch " Resalta los resultados de una búsqueda
 set incsearch " Especifica que las búsquedas deben ser incrementales
 set ignorecase " Establece que no se distinga entra minúscula y mayúscula en
