@@ -176,8 +176,8 @@ hi IndentGuidesEven ctermfg=239
 "
 
 " Añade resaltado a las etiquetas de notas no soportadas por defecto
-au BufWinEnter * let w:m1=matchadd('Error', 'BROKEN\|WTF', -1)
-au BufWinEnter * let w:m1=matchadd('Todo', 'HACK\|BUG\|REVIEW\|FIXME\|TODO\|NOTE', -1)
+au BufWinEnter * let w:m1=matchadd('Error', '\<BROKEN\>\|\<WTF\>', -1)
+au BufWinEnter * let w:m1=matchadd('Todo', '\<HACK\>\|\<BUG\>\|\<REVIEW\>\|\<FIXME\>\|\<TODO\>\|\<NOTE\>', -1)
 
 "
 " ENDMISC
