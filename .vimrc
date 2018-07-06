@@ -147,6 +147,7 @@ let g:airline_theme='base16color'
 "
 
 let g:syntastic_php_checkers=['php', 'phpcs', 'phpmd']
+let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
 
 "
 " ENDSYNTASTIC
@@ -162,8 +163,8 @@ let g:indent_guides_guide_size=1
 let indent_guides_auto_colors=0
 
 " Establece los colores en los que se tienen que mostrar las guías
-hi IndentGuidesOdd ctermbg=239
-hi IndentGuidesOdd ctermfg=239
+hi IndentGuidesOdd ctermbg=237
+hi IndentGuidesOdd ctermfg=237
 hi IndentGuidesEven ctermbg=239
 hi IndentGuidesEven ctermfg=239
 
