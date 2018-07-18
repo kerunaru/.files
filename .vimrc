@@ -28,6 +28,7 @@ call plug#begin(expand('~/.vim/plugged'))
 Plug 'tobyS/pdv'
 Plug 'dag/vim-fish'
 Plug 'chr4/nginx.vim'
+Plug 'tpope/vim-fugitive'
 Plug 'StanAngeloff/php.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/limelight.vim'
@@ -87,6 +88,10 @@ set smartcase " En caso de que el texto contenga mayúsculas y minúsculas,
               " ignora la configuración anterior.
 set scrolloff=3 " Hace scroll cuando aún queden el número de líneas
                 " especificado
+set colorcolumn=80,120 " Muestra dos guías en la posición 80 y 120 del 
+                       " texto respectivamente
+" Sobreescribe el color por defecto de las columnas
+highlight ColorColumn ctermbg=237
 
 "
 " ENDBÁSICOS
