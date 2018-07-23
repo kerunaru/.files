@@ -29,6 +29,7 @@ Plug 'tobyS/pdv'
 Plug 'dag/vim-fish'
 Plug 'chr4/nginx.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'luochen1990/rainbow'
 Plug 'StanAngeloff/php.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/limelight.vim'
@@ -68,6 +69,7 @@ set encoding=utf-8 " Codificación del texto por defecto
 set expandtab " Convierte los carácteres \\t en espacios
 set shiftwidth=4 " Número de espacios a la hora de indentar el código
 set softtabstop=4 " Número de espacios correspondientes a una tabulación
+set tw=119 " Hace que VIM inserte una nueva línea al llegar a esta columna
 set number " Muestra el número de línea actual en la regla de número de líneas
 set relativenumber " Muestra una numeración relativa en la regla de número de
                    " líneas
@@ -88,7 +90,7 @@ set smartcase " En caso de que el texto contenga mayúsculas y minúsculas,
               " ignora la configuración anterior.
 set scrolloff=3 " Hace scroll cuando aún queden el número de líneas
                 " especificado
-set colorcolumn=80,120 " Muestra dos guías en la posición 80 y 120 del 
+set colorcolumn=80,120 " Muestra dos guías en la posición 80 y 120 del
                        " texto respectivamente
 " Sobreescribe el color por defecto de las columnas
 highlight ColorColumn ctermbg=237
@@ -141,6 +143,7 @@ noremap <leader>c :set list<CR>:set relativenumber<CR>:set number<CR>:IndentGuid
 "
 
 let g:airline#extensions#tabline#enabled=1
+let g:airline_powerline_fonts=1
 let g:airline_theme='base16color'
 
 "
@@ -176,6 +179,16 @@ hi IndentGuidesEven ctermfg=239
 "
 " ENDINDENT-GUIDES
 """
+
+"""
+" RAINBOW
+"
+
+let g:rainbow_active = 1
+
+"
+" ENDRAINBOW
+""
 
 """
 " MISC
