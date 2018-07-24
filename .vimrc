@@ -80,8 +80,8 @@ set listchars=eol:↓,tab:»\ ,trail:~,space:· " Establece carácteres para mos
 set list " Especifica que se muestren los carácteres invisibles
 " Sobreescribe el color en el que se tiene que mostrar los carácteres
 " invisibles
-hi SpecialKey ctermfg=239
-hi NonText ctermfg=239
+hi SpecialKey ctermfg=0
+hi NonText ctermfg=0
 set hlsearch " Resalta los resultados de una búsqueda
 set incsearch " Especifica que las búsquedas deben ser incrementales
 set ignorecase " Establece que no se distinga entra minúscula y mayúscula en
@@ -93,7 +93,7 @@ set scrolloff=3 " Hace scroll cuando aún queden el número de líneas
 set colorcolumn=80,120 " Muestra dos guías en la posición 80 y 120 del
                        " texto respectivamente
 " Sobreescribe el color por defecto de las columnas
-highlight ColorColumn ctermbg=237
+highlight ColorColumn ctermbg=0
 
 "
 " ENDBÁSICOS
@@ -171,10 +171,10 @@ let g:indent_guides_guide_size=1
 let indent_guides_auto_colors=0
 
 " Establece los colores en los que se tienen que mostrar las guías
-hi IndentGuidesOdd ctermbg=237
-hi IndentGuidesOdd ctermfg=237
-hi IndentGuidesEven ctermbg=239
-hi IndentGuidesEven ctermfg=239
+hi IndentGuidesOdd ctermbg=0
+hi IndentGuidesOdd ctermfg=0
+hi IndentGuidesEven ctermbg=0
+hi IndentGuidesEven ctermfg=0
 
 "
 " ENDINDENT-GUIDES
