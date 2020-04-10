@@ -5,14 +5,29 @@
 "  \ V /| | | | | | | | | (__
 " (_)_/ |_|_| |_| |_|_|  \___|
 "
-" Configuración personalizada de mi editor de texto favorito :3
+" ==========================================================================
+"
+" RESUMEN DE ATAJOS:
+"   - <c-x><c-o>     :: Autocompletado usando ALE
+"   - <space>n       :: Alterna visualización de Netrw
+"   - <space>k       :: Mueve línea actual hacia arriba (funciona con selecciones)
+"   - <space>j       :: Mueve línea actual hacia abajo (funciona con selecciones)
+"   - <space><space> :: Alterna entre los dos últimos buffers abiertos
+"   - <space>B       :: Crea un nuevo buffer
+"   - <tab>          :: Cambia al siguiente buffer
+"   - <s-tab>        :: Cambia al buffer anterior
+"   - <space>bq      :: Elimina el buffer actual
+"   - <space>ba      :: Elimina todos los buffers
+"   - <c-]>          :: Ir a la definición del tag actual
+"   - g<c-]>         :: Listado de tags por palabra actual
+"
+" RESUMEN DE COMANDOS:
+"   - lwindow  :: Lista de mensajes de ALE
+"   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
+"   - MakeTags :: Crea los tags recursivamente desde :pwd
 "
 
-"""
-" PLUG
-"
-
-" Inicialización del excelente gestor de plugins Plug
+" Autodescarga de VimPlug
 let vimplug_exists=expand('~/.vim/autoload/plug.vim')
 
 if !filereadable(vimplug_exists)
@@ -23,37 +38,48 @@ if !filereadable(vimplug_exists)
   autocmd VimEnter * PlugInstall
 endif
 
+" Carga de plugins
 call plug#begin(expand('~/.vim/plugged'))
-
-Plug 'tobyS/pdv'
-Plug 'dag/vim-fish'
-Plug 'chr4/nginx.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'luochen1990/rainbow'
-Plug 'StanAngeloff/php.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/limelight.vim'
-Plug 'vim-syntastic/syntastic'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'adoy/vim-php-refactoring-toolbox'
-
+  Plug 'bkad/CamelCaseMotion'
+  Plug 'chr4/nginx.vim'
+  Plug 'editorconfig/editorconfig-vim'
+  Plug 'dense-analysis/ale'
+  Plug 'itchyny/lightline.vim'
+  Plug 'itchyny/vim-gitbranch'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'takac/vim-hardtime'
+  Plug 'ayu-theme/ayu-vim'
 call plug#end()
 
-" Establece la carpeta en la que Plug va a instalar los plugins
+" Definición de constantes interesantes
 let vimDir='$HOME/.vim'
 let &runtimepath.=','.vimDir
 
-"
-" ENDPLUG
-"""
+" Básicos
+syntax on
+filetype plugin on
 
-"""
-" BÁSICOS
-"
+colorscheme ayu
+let ayucolor="dark"
 
-" Persiste el histórico de deshacer en disco
+set termguicolors
+set laststatus=2
+set backspace=indent,eol,start
+set path+=**
+set wildmenu
+set scrolloff=3
+set incsearch
+set ignorecase
+set smartcase
+set hlsearch
+set autoindent
+set noswapfile
+set autoread
+set lazyredraw
+set relativenumber
+set cursorline
+
+" Mantenimiento de histórico de cambios persistente
 if has('persistent_undo')
     let myUndoDir=expand(vimDir . '/undodir')
     call system('mkdir ' . vimDir)
@@ -62,142 +88,90 @@ if has('persistent_undo')
     set undofile
 endif
 
-colorscheme default " Redundante, pero IndentGuides lo necesita para arrancar
+" Generación de tags
+command! MakeTags !ctags -R --languages=php,ruby . &> /dev/null &
+augroup PreSaveTasks
+    autocmd!
 
-set t_Co=16 " Establece el número máximo de colores disponibles para VIM
-set encoding=utf-8 " Codificación del texto por defecto
-set expandtab " Convierte los carácteres \\t en espacios
-set shiftwidth=4 " Número de espacios a la hora de indentar el código
-set softtabstop=4 " Número de espacios correspondientes a una tabulación
-set tw=119 " Hace que VIM inserte una nueva línea al llegar a esta columna
-set number " Muestra el número de línea actual en la regla de número de líneas
-set relativenumber " Muestra una numeración relativa en la regla de número de
-                   " líneas
-set backspace=indent,eol,start " Permite que el backspace funcione sobre
-                               " indentación, inicio de línea y fin de línea
-set listchars=eol:↓,tab:»\ ,trail:~,space:· " Establece carácteres para mostrar
-                                            " diferentes carácteres invisibles
-set list " Especifica que se muestren los carácteres invisibles
-" Sobreescribe el color en el que se tiene que mostrar los carácteres
-" invisibles
-hi SpecialKey ctermfg=0
-hi NonText ctermfg=0
-set hlsearch " Resalta los resultados de una búsqueda
-set incsearch " Especifica que las búsquedas deben ser incrementales
-set ignorecase " Establece que no se distinga entra minúscula y mayúscula en
-               " las búsquedas
-set smartcase " En caso de que el texto contenga mayúsculas y minúsculas,
-              " ignora la configuración anterior.
-set scrolloff=3 " Hace scroll cuando aún queden el número de líneas
-                " especificado
-set colorcolumn=80,120 " Muestra dos guías en la posición 80 y 120 del
-                       " texto respectivamente
-" Sobreescribe el color por defecto de las columnas
-highlight ColorColumn ctermbg=0
+    autocmd BufWritePre *.php :silent MakeTags
+    autocmd BufWritePre *.rb :silent MakeTags
+    " Elimina espacios al guardar
+    autocmd BufWritePre * :%s/\s\+$//e
+augroup END
 
-"
-" ENDBÁSICOS
-"""
+" Define la tecla líder
+let mapleader="\<space>"
 
-"""
-" MAPEOS
-"
+" Movimiento de líneas
+nnoremap <leader>k :m-2<cr>==
+nnoremap <leader>j :m+<cr>==
 
-" El carácter \t cambia de pestaña
-nnoremap <Tab> gt
-" El carácter \T cambia de pestaña hacía atrás
-nnoremap <S-Tab> gT
-" El carácter T crea una nueva pestaña
-nnoremap <silent> <S-t> :tabnew<CR>
-" ctrl+j mueve el foco al buffer situado a la izquierda
-noremap <C-h> <C-w>h
-" ctrl+j mueve el foco al buffer situado abajo
-noremap <C-j> <C-w>j
-" ctrl+k mueve el foco al buffer situado arriba
-noremap <C-k> <C-w>k
-" ctrl+l mueve el foco al buffer situado a la derecha
-noremap <C-l> <C-w>l
+" Movimiento de selección
+xnoremap <leader>k :m-2<cr>gv=gv
+xnoremap <leader>j :m'>+<cr>gv=gv
 
-let mapleader="_" " Establece el carácter lider para las diferentes acciones
-                  " que se especifican más abajo
-" La secuencia leader espacio, desactiva la iluminación de los resultados de
-" búsqueda
-noremap <leader><space> :noh<CR>
-" La secuencia leader h, divide la ventana en dos horizontalmente
-noremap <leader>h :<C-u>split<CR>
-" La secuencia leader v, divide la ventana en dos veticalmente
-noremap <leader>v :<C-u>vsplit<CR>
-" La secuencia leader n c, desactiva configuraciones que puedan interferir en
-" a la hora de copiar texto
-noremap <leader>nc :set nolist<CR>:set norelativenumber<CR>:set nonumber<CR>:IndentGuidesDisable<CR>:GitGutterDisable<CR>
-" La secuencia leader c, activa las configuraciones que desactiva la secuencia
-" anterior
-noremap <leader>c :set list<CR>:set relativenumber<CR>:set number<CR>:IndentGuidesEnable<CR>:GitGutterEnable<CR>
+" Mantiene selección después de tabulación
+vnoremap < <gv
+vnoremap > >gv
 
-"
-" ENDMAPEOS
-"""
+" Mejora el visualizado y comportamiento de NEWTRW
+nnoremap <leader>n :Lexplore<CR>
+let g:netrw_banner=0
+let g:netrw_browse_split=4
+let g:netrw_altv=1
+let g:netrw_liststyle=3
+let g:netrw_list_hide=netrw_gitignore#Hide()
+let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
-"""
-" AIRLINE
-"
+" Gestión de buffers (¡No uses pestañas!)
+nnoremap <leader>B :enew<cr>
+nnoremap <Tab> :bnext<cr>
+nnoremap <S-Tab> :bprevious<cr>
+nnoremap <leader>bq :bp <bar> bd! #<cr>
+nnoremap <leader>ba :bufdo bd!<cr>
+nnoremap <leader><leader> <c-^>
 
-let g:airline#extensions#tabline#enabled=1
-let g:airline_powerline_fonts=0
-let g:airline_theme='base16color'
+" Atajos para tokens de PHP
+inoremap ≤ =>
+inoremap ≥ ->
+inoremap ' ''<Left>
+inoremap " ""<Left>
+inoremap ( ()<Left>
+inoremap [ []<Left>
+inoremap { {}<Left>
 
-"
-" ENDAIRLINE
-"""
+" Sobreescribe las teclas de movimiento
+let g:camelcasemotion_key = '<leader>'
 
-"""
-" SYNTASTIC
-"
+" Habilita autocompletado de ALE (^x^o)
+let g:ale_completion_enabled=1
+set omnifunc=ale#completion#OmniFunc
+" Hace que ALE solo compruebe al guardar para aumentar velocidad
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
 
-let g:syntastic_php_checkers=['php', 'phpcs', 'phpmd']
-let g:syntastic_php_phpcs_args='--standard=PSR2 -n'
+" Personaliza Lightline
+let g:lightline = {
+      \ 'colorscheme': 'ayu',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+      \ },
+      \ 'component': {
+      \   'charvaluehex': '0x%B'
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'gitbranch#name'
+      \ }
+      \ }
 
-"
-" ENDSYNTASTIC
-"""
+" TODOTags personalizados
+augroup CustomTODOTags
+    autocmd!
 
-"""
-" INDENT-GUIDES
-"
-
-let g:indent_guides_enable_on_vim_startup=1
-let g:indent_guides_start_level=2
-let g:indent_guides_guide_size=1
-let indent_guides_auto_colors=0
-
-" Establece los colores en los que se tienen que mostrar las guías
-hi IndentGuidesOdd ctermbg=0
-hi IndentGuidesOdd ctermfg=0
-hi IndentGuidesEven ctermbg=0
-hi IndentGuidesEven ctermfg=0
-
-"
-" ENDINDENT-GUIDES
-"""
-
-"""
-" RAINBOW
-"
-
-let g:rainbow_active = 1
-
-"
-" ENDRAINBOW
-""
-
-"""
-" MISC
-"
-
-" Añade resaltado a las etiquetas de notas no soportadas por defecto
-au BufWinEnter * let w:m1=matchadd('Error', '\<BROKEN\>\|\<WTF\>', -1)
-au BufWinEnter * let w:m1=matchadd('Todo', '\<HACK\>\|\<BUG\>\|\<REVIEW\>\|\<FIXME\>\|\<TODO\>\|\<NOTE\>', -1)
-
-"
-" ENDMISC
-"""
+    autocmd BufWinEnter * let w:m1=matchadd('Error', '\<BROKEN\>\|\<WTF\>', -1)
+    autocmd BufWinEnter * let w:m1=matchadd('Todo', '\<HACK\>\|\<BUG\>\|\<REVIEW\>\|\<FIXME\>\|\<TODO\>\|\<NOTE\>', -1)
+augroup END
