@@ -20,11 +20,14 @@
 "   - <space>ba      :: Elimina todos los buffers
 "   - <c-]>          :: Ir a la definición del tag actual
 "   - g<c-]>         :: Listado de tags por palabra actual
+"   - <c-[h|j|k|l]>  :: Navega entre las diferentes ventanas abiertas
 "
 " RESUMEN DE COMANDOS:
 "   - lwindow  :: Lista de mensajes de ALE
 "   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
 "   - MakeTags :: Crea los tags recursivamente desde :pwd
+"   - split    :: Divide la ventana en horizontal
+"   - vplit    :: Divice la ventana en vertical
 "
 
 " Autodescarga de VimPlug
@@ -130,6 +133,10 @@ nnoremap <S-Tab> :bprevious<cr>
 nnoremap <leader>bq :bp <bar> bd! #<cr>
 nnoremap <leader>ba :bufdo bd!<cr>
 nnoremap <leader><leader> <c-^>
+nnoremap <silent> <c-h> :wincmd h<cr>
+nnoremap <silent> <c-j> :wincmd j<cr>
+nnoremap <silent> <c-k> :wincmd k<cr>
+nnoremap <silent> <c-l> :wincmd l<cr>
 
 " Atajos para tokens de PHP
 inoremap ≤ =>
