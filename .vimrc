@@ -52,6 +52,8 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'airblade/vim-gitgutter'
   Plug 'takac/vim-hardtime'
   Plug 'ayu-theme/ayu-vim'
+  Plug 'junegunn/limelight.vim'
+  Plug 'vim-vdebug/vdebug'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -81,6 +83,7 @@ set autoread
 set lazyredraw
 set relativenumber
 set cursorline
+set colorcolumn=80,120
 
 " Mantenimiento de histórico de cambios persistente
 if has('persistent_undo')
@@ -106,12 +109,12 @@ augroup END
 let mapleader="\<space>"
 
 " Movimiento de líneas
-nnoremap <leader>k :m-2<cr>==
-nnoremap <leader>j :m+<cr>==
+nnoremap <leader>k :move-2<cr>==
+nnoremap <leader>j :move+<cr>==
 
 " Movimiento de selección
-xnoremap <leader>k :m-2<cr>gv=gv
-xnoremap <leader>j :m'>+<cr>gv=gv
+xnoremap <leader>k :move-2<cr>gv=gv
+xnoremap <leader>j :move'>+<cr>gv=gv
 
 " Mantiene selección después de tabulación
 vnoremap < <gv
@@ -124,6 +127,7 @@ let g:netrw_browse_split=4
 let g:netrw_altv=1
 let g:netrw_liststyle=3
 let g:netrw_list_hide=netrw_gitignore#Hide()
+let g:netrw_winsize = 25
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
 " Gestión de buffers (¡No uses pestañas!)
@@ -132,7 +136,7 @@ nnoremap <Tab> :bnext<cr>
 nnoremap <S-Tab> :bprevious<cr>
 nnoremap <leader>bq :bp <bar> bd! #<cr>
 nnoremap <leader>ba :bufdo bd!<cr>
-nnoremap <leader><leader> <c-^>
+nnoremap <leader><leader> :bprev<cr>
 nnoremap <silent> <c-h> :wincmd h<cr>
 nnoremap <silent> <c-j> :wincmd j<cr>
 nnoremap <silent> <c-k> :wincmd k<cr>
@@ -174,6 +178,10 @@ let g:lightline = {
       \   'gitbranch': 'gitbranch#name'
       \ }
       \ }
+
+" Limelight
+nnoremap <leader>l :Limelight!!<cr>
+xnoremap <leader>l :Limelight!!<cr>
 
 " TODOTags personalizados
 augroup CustomTODOTags
