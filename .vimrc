@@ -8,26 +8,33 @@
 " ==========================================================================
 "
 " RESUMEN DE ATAJOS:
-"   - <c-x><c-o>     :: Autocompletado usando ALE
-"   - <space>n       :: Alterna visualización de Netrw
-"   - <space>k       :: Mueve línea actual hacia arriba (funciona con selecciones)
-"   - <space>j       :: Mueve línea actual hacia abajo (funciona con selecciones)
-"   - <space><space> :: Alterna entre los dos últimos buffers abiertos
-"   - <space>B       :: Crea un nuevo buffer
-"   - <tab>          :: Cambia al siguiente buffer
-"   - <s-tab>        :: Cambia al buffer anterior
-"   - <space>bq      :: Elimina el buffer actual
-"   - <space>ba      :: Elimina todos los buffers
-"   - <c-]>          :: Ir a la definición del tag actual
-"   - g<c-]>         :: Listado de tags por palabra actual
-"   - <c-[h|j|k|l]>  :: Navega entre las diferentes ventanas abiertas
+"   - <c-x><c-o>       :: Autocompletado usando ALE
+"   - <leader>n        :: Alterna visualización de Netrw
+"   - <leader>k        :: Mueve línea actual hacia arriba (funciona con selecciones)
+"   - <leader>j        :: Mueve línea actual hacia abajo (funciona con selecciones)
+"   - <leader><leader> :: Alterna entre los dos últimos buffers abiertos
+"   - <leader>B        :: Crea un nuevo buffer
+"   - <tab>            :: Cambia al siguiente buffer
+"   - <s-tab>          :: Cambia al buffer anterior
+"   - <leader>bq       :: Elimina el buffer actual
+"   - <leader>ba       :: Elimina todos los buffers
+"   - <c-]>            :: Ir a la definición del tag actual
+"   - g<c-]>           :: Listado de tags por palabra actual
+"   - <c-[h|j|k|l]>    :: Navega entre las diferentes ventanas abiertas
+"   - <leader>u        :: Añade la cláusula \"use\" del elemento dónde se
+"   encuentre el cursor
+"   - <leader>e        :: Expande el elemento donde se encuentre el cursor a un espacio de nombre completo
+"   - <leader>rem      :: Extraer selección a método
+"   - <leader>rlv      :: Renombrar variable local
+"   - <leader>rli      :: Hace que la variable local pase a ser propiedad de la clase
+"   - <leader>rou      :: Reorganiza las cláusulas \"use\"
 "
 " RESUMEN DE COMANDOS:
 "   - lwindow  :: Lista de mensajes de ALE
 "   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
 "   - MakeTags :: Crea los tags recursivamente desde :pwd
 "   - split    :: Divide la ventana en horizontal
-"   - vplit    :: Divice la ventana en vertical
+"   - vplit    :: Divide la ventana en vertical
 "
 
 " Autodescarga de VimPlug
@@ -51,9 +58,12 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'itchyny/vim-gitbranch'
   Plug 'airblade/vim-gitgutter'
   Plug 'takac/vim-hardtime'
-  Plug 'ayu-theme/ayu-vim'
+  Plug 'chriskempson/base16-vim'
+  Plug 'mike-hearn/base16-vim-lightline'
   Plug 'junegunn/limelight.vim'
   Plug 'vim-vdebug/vdebug'
+  Plug 'arnaud-lb/vim-php-namespace'
+  Plug 'vim-php/vim-php-refactoring'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -64,9 +74,8 @@ let &runtimepath.=','.vimDir
 syntax on
 filetype plugin on
 
-colorscheme ayu
-let ayucolor="dark"
-
+colorscheme base16-tomorrow-night
+set background=dark
 set termguicolors
 set laststatus=2
 set backspace=indent,eol,start
@@ -95,18 +104,37 @@ if has('persistent_undo')
 endif
 
 " Generación de tags
-command! MakeTags !ctags -R --languages=php,ruby . &> /dev/null &
+command! MakeTags !ctags -R --languages=php . &> /dev/null &
 augroup PreSaveTasks
     autocmd!
 
     autocmd BufWritePre *.php :silent MakeTags
-    autocmd BufWritePre *.rb :silent MakeTags
     " Elimina espacios al guardar
     autocmd BufWritePre * :%s/\s\+$//e
 augroup END
 
+" Asistente para espacios de nombres de PHP
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+
+function! IPhpExpandClass()
+    call PhpExpandClass()
+    call feedkeys('a', 'n')
+endfunction
+
+augroup PhpNamespacesHelper
+    autocmd!
+
+    autocmd FileType php inoremap <leader>u <esc>:call IPhpInsertUse()<cr>
+    autocmd FileType php noremap <leader>u :call PhpInsertUse()<cr>
+    autocmd FileType php inoremap <leader>e <esc>:call IPhpExpandClass()<cr>
+    autocmd FileType php noremap <leader>e :call PhpExpandClass()<cr>
+augroup END
+
 " Define la tecla líder
-let mapleader="\<space>"
+let mapleader=","
 
 " Movimiento de líneas
 nnoremap <leader>k :move-2<cr>==
@@ -121,19 +149,17 @@ vnoremap < <gv
 vnoremap > >gv
 
 " Mejora el visualizado y comportamiento de NEWTRW
-nnoremap <leader>n :Lexplore<CR>
+nnoremap <leader>n :Lexplore<cr>
 let g:netrw_banner=0
 let g:netrw_browse_split=4
 let g:netrw_altv=1
 let g:netrw_liststyle=3
-let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_winsize = 25
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
 " Gestión de buffers (¡No uses pestañas!)
 nnoremap <leader>B :enew<cr>
-nnoremap <Tab> :bnext<cr>
-nnoremap <S-Tab> :bprevious<cr>
+nnoremap <tab> :bnext<cr>
+nnoremap <s-tab> :bprevious<cr>
 nnoremap <leader>bq :bp <bar> bd! #<cr>
 nnoremap <leader>ba :bufdo bd!<cr>
 nnoremap <leader><leader> :bprev<cr>
@@ -145,11 +171,11 @@ nnoremap <silent> <c-l> :wincmd l<cr>
 " Atajos para tokens de PHP
 inoremap ≤ =>
 inoremap ≥ ->
-inoremap ' ''<Left>
-inoremap " ""<Left>
-inoremap ( ()<Left>
-inoremap [ []<Left>
-inoremap { {}<Left>
+inoremap ' ''<left>
+inoremap " ""<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
 
 " Sobreescribe las teclas de movimiento
 let g:camelcasemotion_key = '<leader>'
@@ -163,7 +189,7 @@ let g:ale_lint_on_insert_leave = 0
 
 " Personaliza Lightline
 let g:lightline = {
-      \ 'colorscheme': 'ayu',
+      \ 'colorscheme': 'base16_tomorrow_night',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
