@@ -24,10 +24,12 @@
 "   - <leader>u        :: Añade la cláusula \"use\" del elemento dónde se
 "   encuentre el cursor
 "   - <leader>e        :: Expande el elemento donde se encuentre el cursor a un espacio de nombre completo
-"   - <leader>rem      :: Extraer selección a método
+"   - <leader>em       :: Extraer selección a método
 "   - <leader>rlv      :: Renombrar variable local
-"   - <leader>rli      :: Hace que la variable local pase a ser propiedad de la clase
-"   - <leader>rou      :: Reorganiza las cláusulas \"use\"
+"   - <leader>ep       :: Hace que la variable local pase a ser propiedad de la clase
+"   - <leader>fi       :: Busca clases que implementen la interfaz donde se encuentre el cursor
+"   - <leader>fe       :: Busca clases que extiendan la clase donde se encuentre el cursor
+"   - <leader>fu       :: Busca usos del elemento donde se encuentre el cursor
 "
 " RESUMEN DE COMANDOS:
 "   - lwindow  :: Lista de mensajes de ALE
@@ -63,12 +65,22 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'junegunn/limelight.vim'
   Plug 'vim-vdebug/vdebug'
   Plug 'arnaud-lb/vim-php-namespace'
-  Plug 'vim-php/vim-php-refactoring'
+  Plug 'adoy/vim-php-refactoring-toolbox'
+  Plug 'mileszs/ack.vim'
 call plug#end()
 
 " Definición de constantes interesantes
 let vimDir='$HOME/.vim'
 let &runtimepath.=','.vimDir
+
+" Mantenimiento de histórico de cambios persistente
+if has('persistent_undo')
+    let myUndoDir=expand(vimDir . '/undodir')
+    call system('mkdir ' . vimDir)
+    call system('mkdir ' . myUndoDir)
+    let &undodir=myUndoDir
+    set undofile
+endif
 
 " Básicos
 syntax on
@@ -94,14 +106,8 @@ set relativenumber
 set cursorline
 set colorcolumn=80,120
 
-" Mantenimiento de histórico de cambios persistente
-if has('persistent_undo')
-    let myUndoDir=expand(vimDir . '/undodir')
-    call system('mkdir ' . vimDir)
-    call system('mkdir ' . myUndoDir)
-    let &undodir=myUndoDir
-    set undofile
-endif
+" Define la tecla líder
+let mapleader=","
 
 " Generación de tags
 command! MakeTags !ctags -R --languages=php . &> /dev/null &
@@ -128,13 +134,25 @@ augroup PhpNamespacesHelper
     autocmd!
 
     autocmd FileType php inoremap <leader>u <esc>:call IPhpInsertUse()<cr>
-    autocmd FileType php noremap <leader>u :call PhpInsertUse()<cr>
     autocmd FileType php inoremap <leader>e <esc>:call IPhpExpandClass()<cr>
-    autocmd FileType php noremap <leader>e :call PhpExpandClass()<cr>
 augroup END
 
-" Define la tecla líder
-let mapleader=","
+" Navegación de código PHP
+function! PhpImplementations(word)
+    exe 'Ack "implements.*' . a:word . ' *($|{)"'
+endfunction
+
+function! PhpSubclasses(word)
+    exe 'Ack "extends.*' . a:word . ' *($|{)"'
+endfunction
+
+function! PhpUsage(word)
+    exe 'Ack "::' . a:word . '\(|>' . a:word . '\("'
+endfunction
+
+nnoremap <leader>fu :call PhpUsage('<cword>')<cr>
+nnoremap <leader>fi :call PhpImplementations('<cword>')<cr>
+nnoremap <leader>fe :call PhpSubclasses('<cword>')<cr>
 
 " Movimiento de líneas
 nnoremap <leader>k :move-2<cr>==
@@ -208,6 +226,17 @@ let g:lightline = {
 " Limelight
 nnoremap <leader>l :Limelight!!<cr>
 xnoremap <leader>l :Limelight!!<cr>
+
+" Ack
+if executable('ag')
+    let g:ackprg = 'ag --vimgrep'
+
+    augroup AckRelated
+        autocmd!
+
+        autocmd QuickFixCmdPost [^l]* nested cwindow
+    augroup END
+endif
 
 " TODOTags personalizados
 augroup CustomTODOTags
