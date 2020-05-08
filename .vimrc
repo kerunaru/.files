@@ -10,6 +10,9 @@
 " RESUMEN DE ATAJOS:
 "   - <c-x><c-o>       :: Autocompletado usando ALE
 "   - <leader>n        :: Alterna visualización de Netrw
+"   - d                :: En Netrw, crea un directorio
+"   - %                :: En Netrw, crea un archivo
+"   - D                :: En Netrw, elimina el nodo sobre el que se encuentra el cursor
 "   - <leader>k        :: Mueve línea actual hacia arriba (funciona con selecciones)
 "   - <leader>j        :: Mueve línea actual hacia abajo (funciona con selecciones)
 "   - <leader><leader> :: Alterna entre los dos últimos buffers abiertos
@@ -21,8 +24,7 @@
 "   - <c-]>            :: Ir a la definición del tag actual
 "   - g<c-]>           :: Listado de tags por palabra actual
 "   - <c-[h|j|k|l]>    :: Navega entre las diferentes ventanas abiertas
-"   - <leader>u        :: Añade la cláusula \"use\" del elemento dónde se
-"   encuentre el cursor
+"   - <leader>u        :: Añade la cláusula \"use\" del elemento dónde se encuentre el cursor
 "   - <leader>e        :: Expande el elemento donde se encuentre el cursor a un espacio de nombre completo
 "   - <leader>em       :: Extraer selección a método
 "   - <leader>rlv      :: Renombrar variable local
@@ -30,13 +32,17 @@
 "   - <leader>fi       :: Busca clases que implementen la interfaz donde se encuentre el cursor
 "   - <leader>fe       :: Busca clases que extiendan la clase donde se encuentre el cursor
 "   - <leader>fu       :: Busca usos del elemento donde se encuentre el cursor
+"   - <leader>+        :: Amplía la ventana actual
+"   - <leader>-        :: Reduce la ventana actual
 "
 " RESUMEN DE COMANDOS:
 "   - lwindow  :: Lista de mensajes de ALE
 "   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
 "   - MakeTags :: Crea los tags recursivamente desde :pwd
+"   - tag      :: Busca un tag
 "   - split    :: Divide la ventana en horizontal
 "   - vplit    :: Divide la ventana en vertical
+"   - close    :: Cierra la ventana actual
 "
 
 " Autodescarga de VimPlug
@@ -67,6 +73,7 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'arnaud-lb/vim-php-namespace'
   Plug 'adoy/vim-php-refactoring-toolbox'
   Plug 'mileszs/ack.vim'
+  Plug 'lumiliet/vim-twig'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -86,7 +93,7 @@ endif
 syntax on
 filetype plugin on
 
-colorscheme base16-tomorrow-night
+colorscheme base16-solarized-dark
 set background=dark
 set termguicolors
 set laststatus=2
@@ -105,6 +112,7 @@ set lazyredraw
 set relativenumber
 set cursorline
 set colorcolumn=80,120
+set tw=119
 
 " Define la tecla líder
 let mapleader=","
@@ -150,9 +158,9 @@ function! PhpUsage(word)
     exe 'Ack "::' . a:word . '\(|>' . a:word . '\("'
 endfunction
 
-nnoremap <leader>fu :call PhpUsage('<cword>')<cr>
 nnoremap <leader>fi :call PhpImplementations('<cword>')<cr>
 nnoremap <leader>fe :call PhpSubclasses('<cword>')<cr>
+nnoremap <leader>fu :call PhpUsage('<cword>')<cr>
 
 " Movimiento de líneas
 nnoremap <leader>k :move-2<cr>==
@@ -185,6 +193,8 @@ nnoremap <silent> <c-h> :wincmd h<cr>
 nnoremap <silent> <c-j> :wincmd j<cr>
 nnoremap <silent> <c-k> :wincmd k<cr>
 nnoremap <silent> <c-l> :wincmd l<cr>
+nnoremap <silent> <leader>+ :vertical resize +5<cr>
+nnoremap <silent> <leader>- :vertical resize -5<cr>
 
 " Atajos para tokens de PHP
 inoremap ≤ =>
@@ -195,6 +205,7 @@ inoremap ( ()<left>
 inoremap [ []<left>
 inoremap { {}<left>
 
+
 " Sobreescribe las teclas de movimiento
 let g:camelcasemotion_key = '<leader>'
 
@@ -204,10 +215,11 @@ set omnifunc=ale#completion#OmniFunc
 " Hace que ALE solo compruebe al guardar para aumentar velocidad
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
+let g:ale_php_phpcs_executable='~/.composer/vendor/bin/phpcs'
 
 " Personaliza Lightline
 let g:lightline = {
-      \ 'colorscheme': 'base16_tomorrow_night',
+      \ 'colorscheme': 'base16_solarized_dark',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
