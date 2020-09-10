@@ -34,6 +34,10 @@
 "   - <leader>fu       :: Busca usos del elemento donde se encuentre el cursor
 "   - <leader>+        :: Amplía la ventana actual
 "   - <leader>-        :: Reduce la ventana actual
+"   - <leader>cf       :: Saca Clap para archivos
+"   - <leader>cb       :: Saca Clap para buffers
+"   - <leader>c        :: Saca Clap de forma genérica
+"   - <leader>l        :: Entrar/salir en modo foco
 "
 " RESUMEN DE COMANDOS:
 "   - lwindow  :: Lista de mensajes de ALE
@@ -74,6 +78,11 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'adoy/vim-php-refactoring-toolbox'
   Plug 'mileszs/ack.vim'
   Plug 'lumiliet/vim-twig'
+  Plug 'liuchengxu/vista.vim'
+  Plug 'liuchengxu/vim-clap'
+  Plug 'osyo-manga/vim-over'
+  Plug 'andymass/vim-matchup'
+  Plug 'morhetz/gruvbox'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -94,13 +103,14 @@ syntax on
 filetype plugin on
 
 colorscheme base16-solarized-dark
+
 set background=dark
 set termguicolors
 set laststatus=2
 set backspace=indent,eol,start
 set path+=**
 set wildmenu
-set scrolloff=3
+set scrolloff=25
 set incsearch
 set ignorecase
 set smartcase
@@ -249,6 +259,11 @@ if executable('ag')
         autocmd QuickFixCmdPost [^l]* nested cwindow
     augroup END
 endif
+
+" Clap
+nnoremap <leader>c :Clap<cr>
+nnoremap <leader>cf :Clap files<cr>
+nnoremap <leader>cb :Clap buffers<cr>
 
 " TODOTags personalizados
 augroup CustomTODOTags
