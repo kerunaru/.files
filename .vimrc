@@ -29,6 +29,7 @@
 "   - <leader>c        :: Saca Clap de forma genérica
 "   - <leader>l        :: Entrar/salir en modo foco
 "   - <leader>v        :: Muestra la lista de símbolos
+"   - <leader>t        :: Abre la prueba asociada al archivo actual
 "   - <leader><space>  :: Sale del modo búsqueda
 "
 " RESUMEN DE COMANDOS:
@@ -74,10 +75,10 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
   Plug 'obcat/vim-hitspop'
-  Plug 'sonph/onehalf', { 'rtp': 'vim' }
   Plug 'chrisbra/Colorizer'
   Plug 'lambdalisue/fern.vim'
-  Plug 'nathanaelkane/vim-indent-guides'
+  Plug 'Yggdroot/indentLine'
+  Plug 'sainnhe/sonokai'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -175,9 +176,13 @@ nnoremap <silent> <c-l> :wincmd l<cr>
 nnoremap <silent> <leader>+ :vertical resize +5<cr>
 nnoremap <silent> <leader>- :vertical resize -5<cr>
 
-" Atajos para tokens de PHP
-inoremap ≤ =>
-inoremap ≥ ->
+" Función para localizar la prueba del archivo actual y abrirla
+function! GetTestFileName()
+  return system("fd " . expand("%:t:r") . 'Test')
+endfunction
+
+nnoremap <leader>t :execute ':e ' . GetTestFileName()<cr>
+
 inoremap ' ''<left>
 inoremap " ""<left>
 inoremap ( ()<left>
@@ -185,7 +190,7 @@ inoremap [ []<left>
 inoremap { {}<left>
 
 " Elimina búsqueda actual
-nnoremap <silent> <leader><space> :<C-u>nohlsearch<cr>
+nnoremap <silent> <leader><esc> :<C-u>nohlsearch<CR>
 
 " Sobreescribe las teclas de movimiento
 let g:camelcasemotion_key = '<leader>'
@@ -195,7 +200,7 @@ let g:vista#renderer#enable_icon = 0
 
 nnoremap <silent> <leader>v :Vista!!<cr>
 
-colorscheme onehalfdark
+colorscheme sonokai
 
 " Limelight
 nnoremap <leader>l :Limelight!!<cr>
@@ -217,7 +222,6 @@ nnoremap <leader>c :Clap<cr>
 nnoremap <leader>cf :Clap files<cr>
 nnoremap <leader>cb :Clap buffers<cr>
 let g:clap_open_preview = 'never'
-let g:clap_theme = g:colors_name
 let g:clap_current_selection_sign = { 'text': '❯', 'texthl': "ClapCurrentSelectionSign", "linehl": "ClapCurrentSelection"}
 
 " Phpactor
@@ -233,11 +237,6 @@ nnoremap <leader>cm :PhpactorContextMenu<cr>
 " Blamer
 let g:blamer_enabled = 1
 let g:blamer_show_in_insert_modes = 0
-if g:colors_name == 'onehalflight'
-    highlight Blamer guibg=#f0f0f0 ctermbg=255 guifg=#a0a1a7 ctermbg=247
-elseif g:colors_name == 'onehalfdark'
-    highlight Blamer guibg=#313640 ctermbg=237 guifg=#5c6370 ctermbg=241
-endif
 
 " TODOTags personalizados
 augroup CustomTODOTags
@@ -246,13 +245,6 @@ augroup CustomTODOTags
     autocmd BufWinEnter * let w:m1=matchadd('Error', '\<BROKEN\>\|\<WTF\>', -1)
     autocmd BufWinEnter * let w:m1=matchadd('Todo', '\<HACK\>\|\<BUG\>\|\<REVIEW\>\|\<FIXME\>\|\<TODO\>\|\<NOTE\>', -1)
 augroup END
-
-" HACK: corrige el tintado de los espacios en blanco
-if g:colors_name == 'onehalflight'
-    highlight SpecialKey guifg=#e5e5e5 ctermfg=252
-elseif g:colors_name == 'onehalfdark'
-    highlight SpecialKey guifg=#373C45 ctermfg=239
-endif
 
 " Personaliza Lightline
 " Obtiene el método actual para mostrarlo desde Vista
@@ -266,7 +258,7 @@ augroup VistaNearestMethodOrFunction
 augroup END
 
 let g:lightline = {
-      \ 'colorscheme': g:colors_name,
+      \ 'colorscheme': 'sonokai',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method' ] ],
@@ -283,10 +275,10 @@ let g:lightline = {
       \ }
       \ }
 
-" Activa y personaliza vim-indent-guides
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd guibg='#373C45' ctermbg=239 guifg='#373C45' ctermfg=239
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg='#373C45' ctermbg=239 guifg='#373C45' ctermfg=239
+" Hitspop
+highlight link hitspopErrorMsg ErrorMsg
+
+" Personaliza indentLines
+let g:indentLine_defaultGroup = 'SpecialKey'
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
