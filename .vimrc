@@ -32,14 +32,13 @@
 "   - <leader>t        :: Abre la prueba asociada al archivo actual
 "   - <leader><space>  :: Sale del modo búsqueda
 "
+"   TODO: Resumir el resto de atajos
+"
 " RESUMEN DE COMANDOS:
 "   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
-"   - MakeTags :: Crea los tags recursivamente desde :pwd
-"   - tag      :: Busca un tag
 "   - split    :: Divide la ventana en horizontal
 "   - vplit    :: Divide la ventana en vertical
 "   - close    :: Cierra la ventana actual
-"   - Ack      :: Busca una cadena de texto recursivamente desde :pwd
 "
 
 " Autodescarga de VimPlug
@@ -62,10 +61,8 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'itchyny/vim-gitbranch'
   Plug 'itchyny/vim-cursorword'
   Plug 'airblade/vim-gitgutter'
-  Plug 'takac/vim-hardtime'
   Plug 'junegunn/limelight.vim'
   Plug 'vim-vdebug/vdebug'
-  Plug 'mileszs/ack.vim'
   Plug 'lumiliet/vim-twig'
   Plug 'liuchengxu/vista.vim'
   Plug 'liuchengxu/vim-clap'
@@ -73,12 +70,15 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'andymass/vim-matchup'
   Plug 'APZelos/blamer.nvim'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
   Plug 'obcat/vim-hitspop'
-  Plug 'chrisbra/Colorizer'
   Plug 'lambdalisue/fern.vim'
   Plug 'Yggdroot/indentLine'
-  Plug 'sainnhe/sonokai'
+  Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+  Plug 'prabirshrestha/vim-lsp'
+  Plug 'mattn/vim-lsp-settings'
+  Plug 'rakr/vim-two-firewatch'
+  Plug 'prabirshrestha/asyncomplete.vim'
+  Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -97,6 +97,8 @@ endif
 " Básicos
 syntax on
 filetype plugin on
+
+colorscheme two-firewatch
 
 set background=dark
 set laststatus=2
@@ -121,17 +123,18 @@ set list
 set cursorline
 set noshowmode
 
+" Personalización de Two Firewatch
+let g:two_firewatch_italics=1
+highlight CursorLine cterm=NONE
+
 " Define la tecla líder
 let mapleader=","
 let maplocalleader="_"
 
-" Generación de tags
-command! MakeTags !ctags -R --languages=php . &> /dev/null &
+" Elimina espacios al guardar
 augroup PreSaveTasks
     autocmd!
 
-    autocmd BufWritePre *.php :silent MakeTags
-    " Elimina espacios al guardar
     autocmd BufWritePre * :%s/\s\+$//e
 augroup END
 
@@ -200,22 +203,9 @@ let g:vista#renderer#enable_icon = 0
 
 nnoremap <silent> <leader>v :Vista!!<cr>
 
-colorscheme sonokai
-
 " Limelight
 nnoremap <leader>l :Limelight!!<cr>
 xnoremap <leader>l :Limelight!!<cr>
-
-" Ack
-if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-
-    augroup AckRelated
-        autocmd!
-
-        autocmd QuickFixCmdPost [^l]* nested cwindow
-    augroup END
-endif
 
 " Clap
 nnoremap <leader>c :Clap<cr>
@@ -224,15 +214,36 @@ nnoremap <leader>cb :Clap buffers<cr>
 let g:clap_open_preview = 'never'
 let g:clap_current_selection_sign = { 'text': '❯', 'texthl': "ClapCurrentSelectionSign", "linehl": "ClapCurrentSelection"}
 
+" VIM LSP
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gtd <plug>(lsp-definition)
+    nmap <buffer> gti <plug>(lsp-implementation)
+    nmap <buffer> gte <plug>(lsp-document-diagnostics)
+    nmap <buffer> fr <plug>(lsp-references)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.php call execute('LspDocumentFormatSync')
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
 " Phpactor
-nnoremap <leader>gtd :PhpactorGotoDefinition<cr>
-nnoremap <leader>gti :PhpactorGotoImplementations<cr>
-nnoremap <leader>fr :PhpactorFindReferences<cr>
-nnoremap <leader>cc :PhpactorCompleteConstructor<cr>
 nnoremap <leader>ga :PhpactorGenerateAccessor<cr>
 nnoremap <leader>em :PhpactorExtractMethod<cr>
-nnoremap <leader>mc :PhpactorMoveFile<cr>
-nnoremap <leader>cm :PhpactorContextMenu<cr>
+nnoremap <leader>mf :PhpactorMoveFile<cr>
 
 " Blamer
 let g:blamer_enabled = 1
@@ -258,7 +269,7 @@ augroup VistaNearestMethodOrFunction
 augroup END
 
 let g:lightline = {
-      \ 'colorscheme': 'sonokai',
+      \ 'colorscheme': 'twofirewatch',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method' ] ],
