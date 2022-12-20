@@ -69,16 +69,17 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'osyo-manga/vim-over'
   Plug 'andymass/vim-matchup'
   Plug 'APZelos/blamer.nvim'
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'obcat/vim-hitspop'
   Plug 'lambdalisue/fern.vim'
   Plug 'Yggdroot/indentLine'
   Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
   Plug 'prabirshrestha/vim-lsp'
   Plug 'mattn/vim-lsp-settings'
-  Plug 'rakr/vim-two-firewatch'
   Plug 'prabirshrestha/asyncomplete.vim'
+  Plug 'chriskempson/base16-vim'
+  Plug 'daviesjamie/vim-base16-lightline'
   Plug 'prabirshrestha/asyncomplete-lsp.vim'
+  Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 call plug#end()
 
 " Definición de constantes interesantes
@@ -98,7 +99,7 @@ endif
 syntax on
 filetype plugin on
 
-colorscheme two-firewatch
+colorscheme base16-classic-dark
 
 set background=dark
 set laststatus=2
@@ -122,10 +123,6 @@ set listchars=eol:↓,tab:»\ ,trail:~,space:·
 set list
 set cursorline
 set noshowmode
-
-" Personalización de Two Firewatch
-let g:two_firewatch_italics=1
-highlight CursorLine cterm=NONE
 
 " Define la tecla líder
 let mapleader=","
@@ -193,7 +190,7 @@ inoremap [ []<left>
 inoremap { {}<left>
 
 " Elimina búsqueda actual
-nnoremap <silent> <leader><esc> :<C-u>nohlsearch<CR>
+nnoremap <silent> <leader><esc> :<C-u>nohlsearch<CR><up><down>
 
 " Sobreescribe las teclas de movimiento
 let g:camelcasemotion_key = '<leader>'
@@ -227,8 +224,6 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> <leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.php call execute('LspDocumentFormatSync')
@@ -244,6 +239,8 @@ augroup END
 nnoremap <leader>ga :PhpactorGenerateAccessor<cr>
 nnoremap <leader>em :PhpactorExtractMethod<cr>
 nnoremap <leader>mf :PhpactorMoveFile<cr>
+nnoremap <leader>cn :PhpactorClassNew<cr>
+nnoremap <leader>ic :PhpactorTransform<cr>
 
 " Blamer
 let g:blamer_enabled = 1
@@ -269,7 +266,7 @@ augroup VistaNearestMethodOrFunction
 augroup END
 
 let g:lightline = {
-      \ 'colorscheme': 'twofirewatch',
+      \ 'colorscheme': 'base16',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method' ] ],
@@ -293,3 +290,5 @@ highlight link hitspopErrorMsg ErrorMsg
 let g:indentLine_defaultGroup = 'SpecialKey'
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
+" .conf files syntax highlighting
+autocmd BufRead,BufNewFile *.conf setf dosini
