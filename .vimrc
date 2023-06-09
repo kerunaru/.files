@@ -65,7 +65,7 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'vim-vdebug/vdebug'
   Plug 'lumiliet/vim-twig'
   Plug 'liuchengxu/vista.vim'
-  Plug 'liuchengxu/vim-clap'
+  Plug 'hashivim/vim-terraform'
   Plug 'osyo-manga/vim-over'
   Plug 'andymass/vim-matchup'
   Plug 'APZelos/blamer.nvim'
@@ -80,6 +80,11 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'daviesjamie/vim-base16-lightline'
   Plug 'prabirshrestha/asyncomplete-lsp.vim'
   Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+  Plug 'github/copilot.vim'
+  Plug 'ap/vim-css-color'
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
+  Plug 'tweekmonster/django-plus.vim'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -99,7 +104,11 @@ endif
 syntax on
 filetype plugin on
 
-colorscheme base16-classic-dark
+if exists('$BASE16_THEME')
+      \ && (!exists('g:colors_name') || g:colors_name != 'base16-$BASE16_THEME')
+    let base16colorspace=256
+    colorscheme base16-$BASE16_THEME
+endif
 
 set background=dark
 set laststatus=2
@@ -123,10 +132,13 @@ set listchars=eol:↓,tab:»\ ,trail:~,space:·
 set list
 set cursorline
 set noshowmode
+set t_Co=256
 
 " Define la tecla líder
 let mapleader=","
-let maplocalleader="_"
+
+" Accede rápidamente al .vimrc
+nnoremap <leader>rc :edit $MYVIMRC<cr>
 
 " Elimina espacios al guardar
 augroup PreSaveTasks
@@ -190,26 +202,26 @@ inoremap [ []<left>
 inoremap { {}<left>
 
 " Elimina búsqueda actual
-nnoremap <silent> <leader><esc> :<C-u>nohlsearch<CR><up><down>
+nnoremap <silent> <leader><esc> :nohlsearch<CR>
 
 " Sobreescribe las teclas de movimiento
 let g:camelcasemotion_key = '<leader>'
 
 " Vista
 let g:vista#renderer#enable_icon = 0
-
+let g:vista_default_executive = 'vim_lsp'
 nnoremap <silent> <leader>v :Vista!!<cr>
 
 " Limelight
 nnoremap <leader>l :Limelight!!<cr>
 xnoremap <leader>l :Limelight!!<cr>
 
-" Clap
-nnoremap <leader>c :Clap<cr>
-nnoremap <leader>cf :Clap files<cr>
-nnoremap <leader>cb :Clap buffers<cr>
-let g:clap_open_preview = 'never'
-let g:clap_current_selection_sign = { 'text': '❯', 'texthl': "ClapCurrentSelectionSign", "linehl": "ClapCurrentSelection"}
+" FZF
+let g:fzf_preview_window = ['down', 'ctrl-/']
+
+nnoremap <leader>sf :Files<cr>
+nnoremap <leader>sb :Buffers<cr>
+nnoremap <leader>st :BTags<cr>
 
 " VIM LSP
 function! s:on_lsp_buffer_enabled() abort

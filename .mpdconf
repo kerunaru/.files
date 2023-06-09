@@ -1,0 +1,56 @@
+#
+#                      _
+#  _ __ ___  _ __   __| |
+# | '_ ` _ \| '_ \ / _` |
+# | | | | | | |_) | (_| |
+# |_| |_| |_| .__/ \__,_|
+#           |_|
+#
+# Configuración de mi reproductor de música favorito :3
+#
+
+##
+# Archivos
+music_directory         "/home/jcabello/Música/"
+playlist_directory      "/home/jcabello/.mpd/playlists"
+db_file                 "/home/jcabello/.mpd/mpd.db"
+log_file                "/home/jcabello/.mpd/mpd.log"
+pid_file                "/home/jcabello/.mpd/mpd.pid"
+state_file              "/home/jcabello/.mpd/mpdstate"
+
+##
+# Salidas de audio
+audio_output {
+	type		"alsa"
+	name		"My ALSA Device"
+##	device		"hw:0,0"	# optional
+##	format		"44100:16:2"	# optional
+##	mixer_type      "hardware"	# optional
+##	mixer_device	"default"	# optional
+##	mixer_control	"PCM"		# optional
+##	mixer_index	"0"		# optional
+}
+
+audio_output {
+    type        "fifo"
+    name        "my_fifo"
+    path        "/tmp/mpd.fifo"
+    format      "44100:16:2"
+    buffer_time "10000"
+}
+
+##
+# Servidor
+bind_to_address         "127.0.0.1"
+port                    "6600"
+
+##
+# Usuario usado
+user                    "jcabello"
+
+##
+# Miscelánea
+auto_update             "yes"
+auto_update_depth       "2"
+follow_outside_symlinks "yes"
+follow_inside_symlinks  "yes"
