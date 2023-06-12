@@ -118,6 +118,10 @@ complete -o default -F __start_kubectl k
 alias kcc='k config current-context'
 
 # pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 eval "$(pyenv virtualenv-init -)"
 
 # Base16 Shell
@@ -128,7 +132,8 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
 
 base16_gruvbox-dark-hard
 
-export PATH=$HOME/.composer/vendor/bin:$HOME/.local/bin:$PATH
+# Composer binaries
+export PATH=$HOME/.config/composer/vendor/bin:$HOME/.local/bin:$PATH
 
 # bat
 export BAT_THEME="base16-256"
