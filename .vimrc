@@ -8,38 +8,49 @@
 " ==========================================================================
 "
 " RESUMEN DE ATAJOS:
-"   - <leader>n        :: Alterna visualización de Fern
-"   - <leader>nr       :: Revela la ubicación de un archivo en Fern
-"   - a                :: En Fern, hace aparecer el menu de acciones
-"   - +                :: En Fern, expande una carpeta
-"   - -                :: En Fern, colapsa una carpeta
-"   - <leader>k        :: Mueve línea actual hacia arriba (funciona con selecciones)
-"   - <leader>j        :: Mueve línea actual hacia abajo (funciona con selecciones)
-"   - <leader><leader> :: Alterna entre los dos últimos buffers abiertos
-"   - <leader>B        :: Crea un nuevo buffer
-"   - <tab>            :: Cambia al siguiente buffer
-"   - <s-tab>          :: Cambia al buffer anterior
-"   - <leader>bq       :: Elimina el buffer actual
-"   - <leader>ba       :: Elimina todos los buffers
-"   - <c-[h|j|k|l]>    :: Navega entre las diferentes ventanas abiertas
-"   - <leader>+        :: Amplía la ventana actual
-"   - <leader>-        :: Reduce la ventana actual
-"   - <leader>sf       :: Abre FZFpara archivos
-"   - <leader>sb       :: Saca ZFZ para buffers
-"   - <leader>v        :: Muestra la lista de símbolos
-"   - <leader>t        :: Abre la prueba asociada al archivo actual
-"   - <leader><esc>    :: Sale del modo búsqueda
-"   - <leader>ga       :: Genera métodos get/set en una clase
-"   - <leader>em       :: Extrae a un método la selección actual
-"   - <leader>mf       :: Mueve el archivo actual (esto actualiza el namespace automáticamente)
-"   - <leader>cn       :: Crea una nueva clase
-"   - <leader>ic       :: Abre el menú de transformación de PHPactor
+"   GENERAL:
+"     <leader>n        :: Alterna visualización de Fern
+"     <leader>nr       :: Revela la ubicación de un archivo en Fern
+"     a                :: En Fern, hace aparecer el menu de acciones
+"     +                :: En Fern, expande una carpeta
+"     -                :: En Fern, colapsa una carpeta
+"     <leader>k        :: Mueve línea actual hacia arriba (funciona con selecciones)
+"     <leader>j        :: Mueve línea actual hacia abajo (funciona con selecciones)
+"     <leader><leader> :: Alterna entre los dos últimos buffers abiertos
+"     <leader>B        :: Crea un nuevo buffer
+"     <tab>            :: Cambia al siguiente buffer
+"     <s-tab>          :: Cambia al buffer anterior
+"     <leader>bq       :: Elimina el buffer actual
+"     <leader>ba       :: Elimina todos los buffers
+"     <c-[h|j|k|l]>    :: Navega entre las diferentes ventanas abiertas
+"     <leader>+        :: Amplía la ventana actual
+"     <leader>-        :: Reduce la ventana actual
+"     <leader>sf       :: Abre FZFpara archivos
+"     <leader>sb       :: Saca ZFZ para buffers
+"     <leader>v        :: Muestra la lista de símbolos
+"     <leader>t        :: Abre la prueba asociada al archivo actual
+"     <leader><esc>    :: Sale del modo búsqueda
+"
+"   PHP:
+"     <leader>ga       :: Genera métodos get/set en una clase
+"     <leader>em       :: Extrae a un método la selección actual
+"     <leader>mf       :: Mueve el archivo actual (esto actualiza el namespace automáticamente)
+"     <leader>cn       :: Crea una nueva clase
+"     <leader>ic       :: Abre el menú de transformación de PHPactor
+"     gtd              :: Va a la definición del símbolo
+"     gti              :: Va a la implementación del símbolo actual
+"     gte              :: Muestra los errores en el archivo actual
+"     fr               :: Busca referencias del símbolo actual
+"     gt               :: Muestra la definición del símbolo actual
+"     rn               :: Renombra el símbolo actual
+"     [g               :: Va al error anterior
+"     ]g               :: Va al error siguiente
 "
 " RESUMEN DE COMANDOS:
-"   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
-"   - split    :: Divide la ventana en horizontal
-"   - vplit    :: Divide la ventana en vertical
-"   - close    :: Cierra la ventana actual
+"   find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
+"   split    :: Divide la ventana en horizontal
+"   vplit    :: Divide la ventana en vertical
+"   close    :: Cierra la ventana actual
 "
 
 " Autodescarga de VimPlug
