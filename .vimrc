@@ -24,15 +24,16 @@
 "   - <c-[h|j|k|l]>    :: Navega entre las diferentes ventanas abiertas
 "   - <leader>+        :: Amplía la ventana actual
 "   - <leader>-        :: Reduce la ventana actual
-"   - <leader>cf       :: Saca Clap para archivos
-"   - <leader>cb       :: Saca Clap para buffers
-"   - <leader>c        :: Saca Clap de forma genérica
-"   - <leader>l        :: Entrar/salir en modo foco
+"   - <leader>sf       :: Abre FZFpara archivos
+"   - <leader>sb       :: Saca ZFZ para buffers
 "   - <leader>v        :: Muestra la lista de símbolos
 "   - <leader>t        :: Abre la prueba asociada al archivo actual
-"   - <leader><space>  :: Sale del modo búsqueda
-"
-"   TODO: Resumir el resto de atajos
+"   - <leader><esc>    :: Sale del modo búsqueda
+"   - <leader>ga       :: Genera métodos get/set en una clase
+"   - <leader>em       :: Extrae a un método la selección actual
+"   - <leader>mf       :: Mueve el archivo actual (esto actualiza el namespace automáticamente)
+"   - <leader>cn       :: Crea una nueva clase
+"   - <leader>ic       :: Abre el menú de transformación de PHPactor
 "
 " RESUMEN DE COMANDOS:
 "   - find     :: Busca un archivo recursivamente desde :pwd (funciona con RegExp)
@@ -54,14 +55,13 @@ endif
 
 " Carga de plugins
 call plug#begin(expand('~/.vim/plugged'))
-  Plug 'bkad/CamelCaseMotion'
+  Plug 'chaoren/vim-wordmotion'
   Plug 'chr4/nginx.vim'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'itchyny/lightline.vim'
   Plug 'itchyny/vim-gitbranch'
   Plug 'itchyny/vim-cursorword'
   Plug 'airblade/vim-gitgutter'
-  Plug 'junegunn/limelight.vim'
   Plug 'vim-vdebug/vdebug'
   Plug 'lumiliet/vim-twig'
   Plug 'liuchengxu/vista.vim'
@@ -76,15 +76,14 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'prabirshrestha/vim-lsp'
   Plug 'mattn/vim-lsp-settings'
   Plug 'prabirshrestha/asyncomplete.vim'
-  Plug 'chriskempson/base16-vim'
-  Plug 'daviesjamie/vim-base16-lightline'
   Plug 'prabirshrestha/asyncomplete-lsp.vim'
   Plug 'mg979/vim-visual-multi', {'branch': 'master'}
   Plug 'github/copilot.vim'
   Plug 'ap/vim-css-color'
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
-  Plug 'tweekmonster/django-plus.vim'
+  Plug 'jwalton512/vim-blade'
+  Plug 'mhinz/vim-startify'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -104,12 +103,6 @@ endif
 syntax on
 filetype plugin on
 
-if exists('$BASE16_THEME')
-      \ && (!exists('g:colors_name') || g:colors_name != 'base16-$BASE16_THEME')
-    let base16colorspace=256
-    colorscheme base16-$BASE16_THEME
-endif
-
 set background=dark
 set laststatus=2
 set backspace=indent,eol,start
@@ -125,14 +118,25 @@ set noswapfile
 set autoread
 set lazyredraw
 set relativenumber
+set number
 set colorcolumn=80,120
 set tw=119
-set termguicolors
 set listchars=eol:↓,tab:»\ ,trail:~,space:·
 set list
 set cursorline
 set noshowmode
-set t_Co=256
+
+" Mejor integración con colores del Terminal
+set t_Co=16
+highlight NonText cterm=NONE ctermbg=NONE ctermfg=8
+highlight SpecialKey cterm=NONE ctermbg=NONE ctermfg=8
+highlight ColorColumn cterm=NONE ctermbg=8
+highlight CursorLine cterm=NONE ctermbg=8
+highlight VertSplit ctermbg=8 ctermfg=8
+highlight LineNr cterm=NONE ctermfg=8
+highlight CursorLineNr cterm=NONE ctermfg=7 ctermbg=8
+highlight Pmenu cterm=NONE ctermfg=7 ctermbg=4
+highlight CopilotSuggestion cterm=NONE ctermfg=0
 
 " Define la tecla líder
 let mapleader=","
@@ -204,20 +208,13 @@ inoremap { {}<left>
 " Elimina búsqueda actual
 nnoremap <silent> <leader><esc> :nohlsearch<CR>
 
-" Sobreescribe las teclas de movimiento
-let g:camelcasemotion_key = '<leader>'
-
 " Vista
 let g:vista#renderer#enable_icon = 0
 let g:vista_default_executive = 'vim_lsp'
 nnoremap <silent> <leader>v :Vista!!<cr>
 
-" Limelight
-nnoremap <leader>l :Limelight!!<cr>
-xnoremap <leader>l :Limelight!!<cr>
-
 " FZF
-let g:fzf_preview_window = ['down', 'ctrl-/']
+let g:fzf_preview_window = []
 
 nnoremap <leader>sf :Files<cr>
 nnoremap <leader>sb :Buffers<cr>
@@ -245,6 +242,27 @@ augroup lsp_install
     au!
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+augroup User lsp_setup call lsp#register_server({
+    \ 'name': 'intelephense',
+    \ 'cmd': {server_info->['intelephense', '--stdio']},
+    \ 'initialization_options': {"storagePath": "/tmp/intelephense", "clearCache": v:true},
+    \ 'whitelist': ['php'],
+    \ 'root_uri':{server_info->lsp#utils#path_to_uri(
+    \             lsp#utils#find_nearest_parent_file_directory(
+    \             lsp#utils#get_buffer_path(),
+    \             ['.git/']
+    \ ))},
+    \ 'workspace_config': { 'intelephense': {
+    \   'files.maxSize': 1000000,
+    \   'files.associations': ['*.php'],
+    \   'trace.server': 'verbose',
+    \   'stubs': [
+    \         "Memcached",
+    \   ],
+    \ }},
+    \ })
 augroup END
 
 " Phpactor
@@ -278,7 +296,7 @@ augroup VistaNearestMethodOrFunction
 augroup END
 
 let g:lightline = {
-      \ 'colorscheme': 'base16',
+      \ 'colorscheme': '16color',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method' ] ],
