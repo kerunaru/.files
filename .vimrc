@@ -94,7 +94,8 @@ call plug#begin(expand('~/.vim/plugged'))
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'jwalton512/vim-blade'
-  Plug 'mhinz/vim-startify'
+  Plug 'tinted-theming/base16-vim'
+  Plug 'kerunaru/base16lightline'
 call plug#end()
 
 " Definición de constantes interesantes
@@ -113,6 +114,14 @@ endif
 " Básicos
 syntax on
 filetype plugin on
+
+" base16 theme
+if exists('$BASE16_THEME')
+    \ && (!exists('g:colors_name')
+    \ || g:colors_name != 'base16-$BASE16_THEME')
+  let base16colorspace=256
+  colorscheme base16-$BASE16_THEME
+endif
 
 set background=dark
 set laststatus=2
@@ -136,18 +145,7 @@ set listchars=eol:↓,tab:»\ ,trail:~,space:·
 set list
 set cursorline
 set noshowmode
-
-" Mejor integración con colores del Terminal
-set t_Co=16
-highlight NonText cterm=NONE ctermbg=NONE ctermfg=8
-highlight SpecialKey cterm=NONE ctermbg=NONE ctermfg=8
-highlight ColorColumn cterm=NONE ctermbg=8
-highlight CursorLine cterm=NONE ctermbg=8
-highlight VertSplit ctermbg=8 ctermfg=8
-highlight LineNr cterm=NONE ctermfg=8
-highlight CursorLineNr cterm=NONE ctermfg=7 ctermbg=8
-highlight Pmenu cterm=NONE ctermfg=7 ctermbg=4
-highlight CopilotSuggestion cterm=NONE ctermfg=0
+set mouse=a
 
 " Define la tecla líder
 let mapleader=","
@@ -307,7 +305,7 @@ augroup VistaNearestMethodOrFunction
 augroup END
 
 let g:lightline = {
-      \ 'colorscheme': '16color',
+      \ 'colorscheme': 'base16lightline',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'method' ] ],

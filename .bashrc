@@ -9,7 +9,7 @@ export OSH='/home/jcabello/.oh-my-bash'
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-bash is loaded.
-OSH_THEME="font"
+OSH_THEME="standard"
 
 # Uncomment the following line to use case-sensitive completion.
 # OMB_CASE_SENSITIVE="true"
@@ -155,20 +155,28 @@ alias k=kubectl
 complete -o default -F __start_kubectl k
 alias kcc='k config current-context'
 
-# Krew
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
-alias fd='fdfind'
 alias python='python3'
 alias docker-compose='docker compose'
 
 # Composer binaries
 export PATH=$HOME/.config/composer/vendor/bin:$HOME/.local/bin:$PATH
 
-# RBEnv
-eval "$(~/.rbenv/bin/rbenv init - bash)"
-
 # Simple calculator function
 calc() {
     echo $(("$1"))
 }
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Base16 Shell
+BASE16_SHELL_PATH="$HOME/.config/base16-shell"
+[ -n "$PS1" ] && \
+[ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] && \
+source "$BASE16_SHELL_PATH/profile_helper.sh"
+
+# FZF colors
+export FZF_DEFAULT_OPTS=--color=bg+:#2A2A2A,gutter:-1
+
+# .NET SDK
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
