@@ -163,7 +163,6 @@ channels = (
   { name = "silc"; chatnet = "SILC"; autojoin = "No"; },
   { name = "#php"; chatnet = "libera"; autojoin = "yes"; }
   { name = "#phpc"; chatnet = "libera"; autojoin = "yes"; }
-  { name = "#fedora"; chatnet = "libera"; autojoin = "yes"; }
 );
 
 aliases = {
