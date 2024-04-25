@@ -73,7 +73,7 @@ OSH_THEME="standard"
 OMB_USE_SUDO=true
 
 # To enable/disable display of Python virtualenv and condaenv
-# OMB_PROMPT_SHOW_PYTHON_VENV=true  # enable
+OMB_PROMPT_SHOW_PYTHON_VENV=true  # enable
 # OMB_PROMPT_SHOW_PYTHON_VENV=false # disable
 
 # Which completions would you like to load? (completions can be found in ~/.oh-my-bash/completions/*)
@@ -155,16 +155,10 @@ alias k=kubectl
 complete -o default -F __start_kubectl k
 alias kcc='k config current-context'
 
-alias python='python3'
 alias docker-compose='docker compose'
 
 # Composer binaries
 export PATH=$HOME/.config/composer/vendor/bin:$HOME/.local/bin:$PATH
-
-# Simple calculator function
-calc() {
-    echo $(("$1"))
-}
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
@@ -177,6 +171,7 @@ source "$BASE16_SHELL_PATH/profile_helper.sh"
 # FZF colors
 export FZF_DEFAULT_OPTS=--color=bg+:#2A2A2A,gutter:-1
 
-# .NET SDK
-export DOTNET_ROOT=$HOME/.dotnet
-export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+# Secure secrets loading
+if [ -f $HOME/.files/.secrets ]; then
+  source $HOME/.files/.secrets
+fi

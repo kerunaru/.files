@@ -145,6 +145,7 @@ set listchars=eol:↓,tab:»\ ,trail:~,space:·
 set list
 set cursorline
 set noshowmode
+set tabstop=4
 set mouse=a
 
 " Define la tecla líder
