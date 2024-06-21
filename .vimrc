@@ -182,7 +182,7 @@ endfunction
 augroup FernCustom
   autocmd! *
   autocmd FileType fern call s:init_fern()
-  autocmd FileType fern set norelativenumber nolist
+  autocmd FileType fern set nonumber norelativenumber nolist
 augroup END
 
 nnoremap <leader>n :Fern . -drawer -toggle<cr>

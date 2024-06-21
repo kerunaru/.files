@@ -162,11 +162,11 @@ export PATH=$HOME/.config/composer/vendor/bin:$HOME/.local/bin:$PATH
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Base16 Shell
-BASE16_SHELL_PATH="$HOME/.config/base16-shell"
+# Tinted Shell
+TINTED_SHELL_PATH="$HOME/.config/tinted-shell"
 [ -n "$PS1" ] && \
-[ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] && \
-source "$BASE16_SHELL_PATH/profile_helper.sh"
+[ -s "$TINTED_SHELL_PATH/profile_helper.sh" ] && \
+source "$TINTED_SHELL_PATH/profile_helper.sh"
 
 # FZF colors
 export FZF_DEFAULT_OPTS=--color=bg+:#2A2A2A,gutter:-1
@@ -175,3 +175,6 @@ export FZF_DEFAULT_OPTS=--color=bg+:#2A2A2A,gutter:-1
 if [ -f $HOME/.files/.secrets ]; then
   source $HOME/.files/.secrets
 fi
+
+# MOTD
+$HOME/.local/bin/unix
